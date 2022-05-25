@@ -5,5 +5,6 @@ import DAL.Utils.Filter.Enums.CriteriaType;
 public interface FilterDef {
     String getFieldName();
     String getEntity();
+    String getUserDescription();
     CriteriaType getType();
 }

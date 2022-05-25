@@ -1,8 +1,5 @@
-package DAL.Contracts;
+package DAL.Contracts.Repository;
 
-import javax.ejb.Local;
-
-@Local
 public interface CrudRepository<T, K> {
     T getById(K id);
     void create(T value);

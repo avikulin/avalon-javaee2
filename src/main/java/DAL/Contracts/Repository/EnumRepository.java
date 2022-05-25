@@ -1,4 +1,4 @@
-package DAL.Contracts;
+package DAL.Contracts.Repository;
 
 import java.util.List;
 

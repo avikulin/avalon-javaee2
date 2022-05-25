@@ -11,7 +11,7 @@ import javax.persistence.*;
 public class Equipment  extends AuditableEntity {
     @Id
     @GeneratedValue
-    private int id;
+    private Long id;
 
     @Column(name = "UNIT_CODE", nullable = false, length = 50)
     private String code;
@@ -33,7 +33,7 @@ public class Equipment  extends AuditableEntity {
     })
     private IpAddress ipAddress;
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 

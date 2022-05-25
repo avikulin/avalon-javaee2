@@ -1,4 +1,4 @@
-package DAL.Contracts;
+package DAL.Contracts.Repository;
 
 import DAL.Utils.Filter.Contracts.FilterDef;
 import DAL.Utils.Filter.Contracts.FilterExpression;

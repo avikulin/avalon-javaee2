@@ -1,25 +1,25 @@
-package DAL.Templates;
+package DAL.Repositories;
 
-import DAL.Contracts.CrudRepository;
+import DAL.Contracts.Repository.CrudRepository;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContextType;
 import java.util.Objects;
 
-@Stateless
 public class BaseCrudRepository<T,K> implements CrudRepository<T,K> {
-    @PersistenceContext(name = "lab1", type = PersistenceContextType.TRANSACTION)
     private EntityManager entityManager;
-
+    private final EntityTransaction tx;
     private Class<T> clazz ;
 
-    public BaseCrudRepository(){};
 
-    public BaseCrudRepository(Class<T> entityClass) {
+    public BaseCrudRepository(Class<T> entityClass, EntityManager entityManager) {
         super();
+        this.entityManager = entityManager;
         this.clazz =entityClass;
+        this.tx = entityManager.getTransaction();
     }
 
     @Override
@@ -31,20 +31,27 @@ public class BaseCrudRepository<T,K> implements CrudRepository<T,K> {
     @Override
     public void create(T value) {
         Objects.requireNonNull(value, "Entity value must be not null");
+        tx.begin();
         entityManager.persist(value);
+        tx.commit();
     }
 
     @Override
     public T update(T value) {
         Objects.requireNonNull(value, "Entity value must be not null");
-        return entityManager.merge(value);
+        tx.begin();
+        T res = entityManager.merge(value);
+        tx.commit();
+        return res;
     }
 
     @Override
     public void delete(K key) {
         Objects.requireNonNull(key, "Key must be not null");
+        tx.begin();
         T entity = getById(key);
         entityManager.remove(entity);
+        tx.commit();
     }
 
     @Override
