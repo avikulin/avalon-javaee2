@@ -2,15 +2,15 @@ package DAL.Repositories;
 
 import Common.Contracts.FieldDef;
 import Common.FieldDefImpl;
-import DAL.Annotations.Filterable;
-import DAL.Annotations.SourceEntity;
-import DAL.Annotations.SourceField;
-import DAL.Annotations.UserCaption;
+import DAL.Annotations.*;
 import DAL.Contracts.Repository.ReadViewRepository;
 import DAL.Utils.Filter.Contracts.FilterDef;
 import DAL.Utils.Filter.Contracts.FilterExpression;
+import DAL.Utils.Filter.Enums.CriteriaType;
+import DAL.Utils.Filter.FilterDefImpl;
 
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Parameter;
@@ -20,11 +20,11 @@ import java.util.stream.Collectors;
 public class BaseReadViewRepository<T> implements ReadViewRepository<T> {
     private final EntityManager entityManager;
     private final Class<T> clazz;
-    private String rootEntityName;
-    private final Map<String, FieldDef> fieldMap;
-    private final List<String> projectionExpressionTokens;
+    private final Map<Integer, FieldDef> fieldMap;
+    private final Map<String, String> entityMap;
+    private List<String> projectionExpressionTokens;
     private List<String> fromExpressionTokens;
-    private final List<String> filterableFields;
+    private final List<FieldDef> filterableFields;
     private String query;
     public BaseReadViewRepository(EntityManager entityManager, Class<T> clazz) {
         Objects.requireNonNull(entityManager, "EntityManager object reference must be not null");
@@ -34,7 +34,8 @@ public class BaseReadViewRepository<T> implements ReadViewRepository<T> {
         this.projectionExpressionTokens = new ArrayList<>();
         this.fromExpressionTokens = new ArrayList<>();
         this.filterableFields = new ArrayList<>();
-        this.fieldMap = new HashMap<>();
+        this.fieldMap = new TreeMap<>();
+        this.entityMap = new HashMap<>();
         prepareJpql();
     }
 
@@ -44,23 +45,21 @@ public class BaseReadViewRepository<T> implements ReadViewRepository<T> {
             throw new IllegalStateException("Illegal class annotations detected");
         }
 
-        this.rootEntityName = entityAttr[0].entityName();
+        String rootEntityName = entityAttr[0].entityName();
 
         Constructor[] ctors = clazz.getDeclaredConstructors();
         if (ctors.length == 0){
             throw new IllegalStateException("Illegal default constructor structure detected");
         }
 
-        Constructor constructor = ctors[0];
-        for(Parameter p : constructor.getParameters()){
-            this.projectionExpressionTokens.add(p.getName());
-        }
+        Constructor<T> ctor = ctors[0];
 
         Field[] fields = clazz.getDeclaredFields();
         for(Field f: fields){
             UserCaption[] captionAttr = f.getAnnotationsByType(UserCaption.class);
             Filterable[] filterableAttr = f.getAnnotationsByType(Filterable.class);
             SourceField[] sourceAttr = f.getAnnotationsByType(SourceField.class);
+            CtorParam[] ctorParamsAttr = f.getAnnotationsByType(CtorParam.class);
 
             if (captionAttr.length == 0 || sourceAttr.length == 0){
                 throw new IllegalStateException("Illegal field annotations detected");
@@ -69,12 +68,18 @@ public class BaseReadViewRepository<T> implements ReadViewRepository<T> {
             String caption = captionAttr[0].caption();
             SourceField source = sourceAttr[0];
             String entity = source.fieldSource();
+            String alias = registerEntity(entity);
             String field = source.fieldProjectionPath();
             String path = source.fieldProjectionPath();
-            filterableFields.add(new FieldDefImpl(entity, field, caption, f.getType()))
+
+            FieldDef fd = new FieldDefImpl(entity, alias, field, path, caption, f.getType());
+            if (ctorParamsAttr.length > 0) {
+                int pos = ctorParamsAttr[0].position();
+                this.fieldMap.put(pos, fd);
+            }
 
             if (filterableAttr.length > 0){
-                ;
+                filterableFields.add(fd);
             }
         }
 
@@ -84,8 +89,17 @@ public class BaseReadViewRepository<T> implements ReadViewRepository<T> {
                                                     .stream()
                                                         .map(e->e.getKey()+" "+e.getValue())
                                                             .collect(Collectors.toList());
-        this.query = "select ".concat(String.join(",",this.projectionExpressionTokens));
-        this.query = this.query.concat(" from ").concat(String.join(",", this.fromExpressionTokens));
+        String rootAlias = this.entityMap.get(rootEntityName);
+        this.projectionExpressionTokens = this.fieldMap.entrySet()
+                                                    .stream()
+                                                        .map(e -> rootAlias+"."+e.getValue().getProjectionPath())
+                                                                    .collect(Collectors.toList());
+        this.query = "select new "
+                .concat(ctor.getName())
+                .concat("(")
+                .concat(String.join(",",this.projectionExpressionTokens))
+                .concat(")");
+        this.query = this.query.concat(" from ").concat(String.join(", ", this.fromExpressionTokens));
     }
 
     private String registerEntity(String entity){
@@ -100,12 +114,20 @@ public class BaseReadViewRepository<T> implements ReadViewRepository<T> {
 
     @Override
     public List<FilterDef> getFilterDefs() {
-        return null;
+        return this.filterableFields
+                    .stream()
+                        .map(f-> new FilterDefImpl(f.getEntity(),
+                                                   f.getName(),
+                                                   f.getCaption(),
+                                                   CriteriaType.getByType(f.getClass())
+                                                  ))
+                        .collect(Collectors.toList());
     }
 
     @Override
     public List<T> getAll(FilterExpression filterExpression) {
-        return null;
+        TypedQuery<T> queryDef = entityManager.createQuery(this.query, this.clazz);
+        return queryDef.getResultList();
     }
 
     public String getFilterableFields() {
@@ -113,6 +135,6 @@ public class BaseReadViewRepository<T> implements ReadViewRepository<T> {
     }
 
     public String getQuery() {
-        return query;
+        return this.query;
     }
 }
