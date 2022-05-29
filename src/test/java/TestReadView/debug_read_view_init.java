@@ -1,8 +1,7 @@
 package TestReadView;
 
 import DAL.Repositories.BaseReadViewRepository;
-import ViewModels.DTO.ModelTableRow;
-import org.eclipse.persistence.internal.jpa.EntityManagerFactoryImpl;
+import ViewModels.TableViews.DTO.ModelTableRowDTO;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -13,7 +12,7 @@ public class debug_read_view_init {
     public static void main(String[] args) {
         EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("lab1");
         EntityManager entityManager = entityManagerFactory.createEntityManager();
-        BaseReadViewRepository<ModelTableRow> modelReadViewRepository = new BaseReadViewRepository<>(entityManager, ModelTableRow.class);
+        BaseReadViewRepository<ModelTableRowDTO> modelReadViewRepository = new BaseReadViewRepository<>(entityManager, ModelTableRowDTO.class);
 
         System.out.println("prepared query: ");
         System.out.println(modelReadViewRepository.getQuery());
@@ -23,8 +22,8 @@ public class debug_read_view_init {
 
         System.out.println();
         System.out.println("query results:");
-        List<ModelTableRow> res = modelReadViewRepository.getAll(null);
-        for(ModelTableRow mtr: res){
+        List<ModelTableRowDTO> res = modelReadViewRepository.getAll(null);
+        for(ModelTableRowDTO mtr: res){
             System.out.println(mtr.toString());
         }
     }

@@ -23,6 +23,9 @@ public class Country extends AuditableEntity {
     @Column(name = "FULL_NAME", nullable = false)
     private String fullName;
 
+    @Column(name = "REGION", nullable = false)
+    private String region;
+
     public String getId() {
         return id;
     }
@@ -53,5 +56,13 @@ public class Country extends AuditableEntity {
 
     public void setFullName(String fullName) {
         this.fullName = fullName;
+    }
+
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
     }
 }

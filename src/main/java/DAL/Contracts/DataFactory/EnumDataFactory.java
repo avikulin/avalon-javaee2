@@ -4,14 +4,11 @@ import DAL.DataEntities.Enums.DeviceType;
 import DAL.DataEntities.Enums.OsiLayer;
 import DAL.Repositories.BaseEnumRepository;
 
-import javax.ejb.Local;
-import javax.enterprise.inject.Produces;
-
-@Local
+//@Local
 public interface EnumDataFactory {
-    @Produces
+//    @Produces
     BaseEnumRepository<DeviceType> getDeviceTypeRepo();
 
-    @Produces
+//    @Produces
     BaseEnumRepository<OsiLayer> getOsiLayerRepo();
 }

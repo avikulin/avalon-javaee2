@@ -3,11 +3,11 @@ package DAL.DataEntities.Registers;
 import Common.AuditableEntity;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.StringJoiner;
 
 @Entity
-@Table(name = "REG_ORG_LOCATIONS", uniqueConstraints = {
-        @UniqueConstraint(name = "ORG_LOCATIONS_UC",columnNames = {"ORGANIZATION_ID", "LOC_NAME"})
+@Table(name = "reg_org_locations", uniqueConstraints = {
+        @UniqueConstraint(name = "org_locations_uc", columnNames = {"ORGANIZATION_ID", "LOC_NAME"})
 })
 public class Location extends AuditableEntity {
     @Id
@@ -22,11 +22,23 @@ public class Location extends AuditableEntity {
     @Column(name = "LOC_NAME", nullable = false, length = 50)
     private String locName;
 
-    @Column(name = "LOC_ADDRESS", nullable = false, length = 250)
-    private String locAddress;
+    @Column(name = "LOC_CITY", nullable = false, length = 100)
+    private String locCity;
 
-    @ManyToMany(mappedBy = "locations")
-    private List<Contact> contacts;
+    @Column(name = "LOC_STREET", nullable = false, length = 100)
+    private String locStreet;
+
+    @Column(name = "LOC_HOUSE_NUM", nullable = false)
+    private int locHouseNumber;
+
+    @Column(name = "LOC_BUILD_NUM", nullable = false)
+    private int locBuilding;
+
+    @Column(name = "LOC_APP_NUM", nullable = false)
+    private int locApartmentNumber;
+
+    @Column(name = "LOC_INFO", nullable = true, length = 200)
+    private String locInfo;
 
     public Long getId() {
         return id;
@@ -40,16 +52,52 @@ public class Location extends AuditableEntity {
         this.locName = locName;
     }
 
-    public String getLocAddress() {
-        return locAddress;
+    public String getLocationCity() {
+        return locCity;
     }
 
-    public void setLocAddress(String locAddress) {
-        this.locAddress = locAddress;
+    public void setLocationCity(String locCity) {
+        this.locCity = locCity;
     }
 
-    public List<Contact> getContacts() {
-        return contacts;
+    public String getLocationStreet() {
+        return locStreet;
+    }
+
+    public void setStreet(String locStreet) {
+        this.locStreet = locStreet;
+    }
+
+    public int getHouseNumber() {
+        return locHouseNumber;
+    }
+
+    public void setHouseNumber(int locHouseNumber) {
+        this.locHouseNumber = locHouseNumber;
+    }
+
+    public int getBuilding() {
+        return locBuilding;
+    }
+
+    public void setBuilding(int locBuilding) {
+        this.locBuilding = locBuilding;
+    }
+
+    public int getApartmentNumber() {
+        return locApartmentNumber;
+    }
+
+    public void setApartmentNumber(int locApartmentNumber) {
+        this.locApartmentNumber = locApartmentNumber;
+    }
+
+    public String getInfo() {
+        return locInfo;
+    }
+
+    public void setInfo(String locInfo) {
+        this.locInfo = locInfo;
     }
 
     public void setOrganization(Organization organization) {

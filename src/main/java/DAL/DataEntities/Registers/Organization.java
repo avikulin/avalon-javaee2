@@ -22,6 +22,17 @@ public class Organization extends AuditableEntity {
     @Column(name = "ORG_NAME", nullable = false, unique = true, length = 200)
     private String name;
 
+    @Column(name = "ORG_FULL_NAME", nullable = false, length = 250)
+    private String fullName;
+
+    @OneToOne
+    @JoinColumn(name="MAIN_LOCATION_ID", nullable = false)
+    private Location mainOfficeLocation;
+
+    @OneToOne
+    @JoinColumn(name="MAIN_CONTACT_ID", nullable = false)
+    private Contact mainContact;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "organization")
     private List<Location> locations = new ArrayList<>();
 
@@ -41,12 +52,22 @@ public class Organization extends AuditableEntity {
         return name;
     }
 
+    public String getFullName() {
+        return fullName;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
 
     public List<Location> getLocations() {
         return locations;
+    }
+
+    @PrePersist
+    @PreUpdate
+    private void setFullName(){
+        this.fullName = this.name+", "+this.type.getType_id();
     }
 }
 

@@ -50,7 +50,11 @@ public class debug_runner_init_db {
 
         Location location = new Location();
         location.setLocName("Main office");
-        location.setLocAddress("143520, Moscow area, city distr. Istra, Svetlogorye village, 14a");
+        location.setLocationCity("Moscow");
+        location.setStreet("Nametkina");
+        location.setHouseNumber(9);
+        location.setBuilding(1);
+        location.setApartmentNumber(47);
         location.setOrganization(organization);
         em.persist(location);
 

@@ -13,7 +13,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.Parameter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,8 +23,9 @@ public class BaseReadViewRepository<T> implements ReadViewRepository<T> {
     private final Map<String, String> entityMap;
     private List<String> projectionExpressionTokens;
     private List<String> fromExpressionTokens;
-    private final List<FieldDef> filterableFields;
+    private final Map<String, FieldDef> filterableFields;
     private String query;
+
     public BaseReadViewRepository(EntityManager entityManager, Class<T> clazz) {
         Objects.requireNonNull(entityManager, "EntityManager object reference must be not null");
         Objects.requireNonNull(clazz, "Base class reference must be not null");
@@ -33,7 +33,7 @@ public class BaseReadViewRepository<T> implements ReadViewRepository<T> {
         this.clazz = clazz;
         this.projectionExpressionTokens = new ArrayList<>();
         this.fromExpressionTokens = new ArrayList<>();
-        this.filterableFields = new ArrayList<>();
+        this.filterableFields = new HashMap<>();
         this.fieldMap = new TreeMap<>();
         this.entityMap = new HashMap<>();
         prepareJpql();
@@ -69,8 +69,8 @@ public class BaseReadViewRepository<T> implements ReadViewRepository<T> {
             SourceField source = sourceAttr[0];
             String entity = source.fieldSource();
             String alias = registerEntity(entity);
-            String field = source.fieldProjectionPath();
-            String path = source.fieldProjectionPath();
+            String field = source.fieldName();
+            String path = source.fieldProjectionPath().isEmpty() ? source.fieldName() : source.fieldProjectionPath();
 
             FieldDef fd = new FieldDefImpl(entity, alias, field, path, caption, f.getType());
             if (ctorParamsAttr.length > 0) {
@@ -79,11 +79,9 @@ public class BaseReadViewRepository<T> implements ReadViewRepository<T> {
             }
 
             if (filterableAttr.length > 0){
-                filterableFields.add(fd);
+                filterableFields.put(f.getName(), fd);
             }
         }
-
-
 
         this.fromExpressionTokens = this.entityMap.entrySet()
                                                     .stream()
@@ -114,14 +112,13 @@ public class BaseReadViewRepository<T> implements ReadViewRepository<T> {
 
     @Override
     public List<FilterDef> getFilterDefs() {
-        return this.filterableFields
+        return this.filterableFields.values()
                     .stream()
-                        .map(f-> new FilterDefImpl(f.getEntity(),
-                                                   f.getName(),
-                                                   f.getCaption(),
-                                                   CriteriaType.getByType(f.getClass())
-                                                  ))
-                        .collect(Collectors.toList());
+                        .map(fd -> new FilterDefImpl(fd.getEntity(),
+                                                     fd.getName(),
+                                                     fd.getCaption(),
+                                                     CriteriaType.getByType(fd.getClass())
+                            )).collect(Collectors.toList());
     }
 
     @Override
@@ -131,7 +128,7 @@ public class BaseReadViewRepository<T> implements ReadViewRepository<T> {
     }
 
     public String getFilterableFields() {
-        return filterableFields.stream().map(Object::toString).collect(Collectors.joining(", "));
+        return filterableFields.values().stream().map(Object::toString).collect(Collectors.joining(", "));
     }
 
     public String getQuery() {

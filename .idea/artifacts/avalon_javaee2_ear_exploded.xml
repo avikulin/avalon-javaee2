@@ -2,7 +2,6 @@
   <artifact type="exploded-ear" name="avalon-javaee2:ear exploded">
     <output-path>$PROJECT_DIR$/out/artifacts/avalon_javaee2_ear_exploded.ear</output-path>
     <root id="root">
-      <element id="javaee-facet-resources" facet="avalon-javaee2/javaeeApplication/javaEEApplication" />
       <element id="directory" name="web.war">
         <element id="artifact" artifact-name="avalon-javaee2:war exploded" />
       </element>
