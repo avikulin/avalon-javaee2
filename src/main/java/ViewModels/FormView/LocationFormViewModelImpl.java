@@ -5,12 +5,10 @@ import DAL.Contracts.Repository.CrudRepository;
 import DAL.DataEntities.Registers.Location;
 import DAL.DataEntities.Registers.Organization;
 import ViewModels.FormView.DTO.LocationReadDTO;
-import ViewModels.ListView.DTO.Read.OrganizationListItemDTO;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 

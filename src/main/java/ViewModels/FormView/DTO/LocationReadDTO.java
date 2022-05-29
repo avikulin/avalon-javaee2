@@ -1,9 +1,5 @@
 package ViewModels.FormView.DTO;
 
-import ViewModels.ListView.DTO.Read.OrganizationListItemDTO;
-
-import java.util.List;
-
 public class LocationReadDTO {
     private final Long id;
     private final String locationName;
