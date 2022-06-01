@@ -1,6 +1,6 @@
-INSERT INTO public.dict_organization_types (type_id, type_description) values
-('ООО', 'Общество с ограниченной ответственностью'),
-('ПАО', 'Публичное акционерное общество'),
+п»їINSERT INTO public.dict_organization_types (type_id, type_description) values
+('РћРћРћ', 'РћР±С‰РµСЃС‚РІРѕ СЃ РѕРіСЂР°РЅРёС‡РµРЅРЅРѕР№ РѕС‚РІРµС‚СЃС‚РІРµРЅРЅРѕСЃС‚СЊСЋ'),
+('РџРђРћ', 'РџСѓР±Р»РёС‡РЅРѕРµ Р°РєС†РёРѕРЅРµСЂРЅРѕРµ РѕР±С‰РµСЃС‚РІРѕ'),
 ('LTD', 'Limited liability company'),
 ('CORP', 'Corporation (Public company)');
 
