@@ -1,22 +1,45 @@
 package Common;
 
 import javax.persistence.Embeddable;
+import java.net.Inet4Address;
+import java.net.Inet6Address;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 @Embeddable
 public class IpAddress {
-    int first;
-    int second;
-    int third;
-    int fourth;
+    private String ipAddressValue;
 
     protected IpAddress(){};
 
     public IpAddress(int first, int second, int third, int fourth) {
-        setFirst(first);
-        setSecond(second);
-        setThird(third);
-        setFourth(fourth);
+        checkOctet(first);
+        checkOctet(second);
+        checkOctet(third);
+        checkOctet(fourth);
+        this.ipAddressValue = Integer.toString(first) + '.' + second + '.' + third + '.' + fourth;
+    }
+
+    public IpAddress(String strIpAddr) {
+        checkIpString(strIpAddr);
+        this.ipAddressValue = strIpAddr;
+    }
+
+    public void checkIpString(String address) {
+        if (address == null || address.isEmpty()) {
+            throw new IllegalArgumentException("Address string must be not null & non-empty");
+        }
+
+        try {
+            Object res = InetAddress.getByName(address);
+            if (!(res instanceof Inet4Address) && !(res instanceof Inet6Address)){
+                throw new IllegalArgumentException("String is not represents a valid IPv4 or IPv6 network address");
+            }
+        } catch (final UnknownHostException exception) {
+            throw new IllegalArgumentException("String is not represents a valid IPv4 or IPv6 network address");
+        }
     }
 
     private void checkOctet(int octet){
@@ -25,66 +48,21 @@ public class IpAddress {
         throw new IllegalArgumentException("Each octet value must be between 0 and 254.");
     }
 
-    private void setFirst(int fist) {
-        checkOctet(fist);
-        this.first = fist;
-    }
-
-    private void setSecond(int second) {
-        checkOctet(second);
-        this.second = second;
-    }
-
-    private void setThird(int third) {
-        checkOctet(third);
-        this.third = third;
-    }
-
-    private void setFourth(int fourth) {
-        checkOctet(fourth);
-        this.fourth = fourth;
-    }
-
-    public int getFirst() {
-        return first;
-    }
-
-    public int getSecond() {
-        return second;
-    }
-
-    public int getThird() {
-        return third;
-    }
-
-    public int getFourth() {
-        return fourth;
-    }
-
     @Override
     public String toString() {
-        return String.valueOf(first) +
-                '.' +
-                second +
-                '.' +
-                third +
-                '.' +
-                fourth;
+        return this.ipAddressValue;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        IpAddress ipAddress = (IpAddress) o;
-        return first == ipAddress.first &&
-                second == ipAddress.second &&
-                third == ipAddress.third &&
-                fourth == ipAddress.fourth;
+        IpAddress otherIpAddress = (IpAddress) o;
+        return this.ipAddressValue.equals(otherIpAddress.ipAddressValue);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(first, second, third, fourth);
+        return Objects.hash(this.ipAddressValue);
     }
 }

@@ -26,10 +26,7 @@ public class Equipment  extends AuditableEntity {
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "first", column = @Column(name = "IP_OCT_A", nullable = false)),
-            @AttributeOverride(name = "second", column = @Column(name = "IP_OCT_B", nullable = false)),
-            @AttributeOverride(name = "third", column = @Column(name = "IP_OCT_C", nullable = false)),
-            @AttributeOverride(name = "fourth", column = @Column(name = "IP_OCT_D", nullable = false))
+            @AttributeOverride(name = "ipAddressValue", column = @Column(name = "IP_ADDR", nullable = false))
     })
     private IpAddress ipAddress;
 
