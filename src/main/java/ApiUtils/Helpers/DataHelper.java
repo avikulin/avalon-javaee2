@@ -9,7 +9,7 @@ public class DataHelper {
     private static final SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT);
 
     public static String getString(String val) {
-        if (DataValidator.isNotNull(val)) {
+        if (DataValidator.isNotEmpty(val)) {
             return val.trim();
         } else {
             return val;

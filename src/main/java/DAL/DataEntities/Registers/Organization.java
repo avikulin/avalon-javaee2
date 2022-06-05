@@ -26,11 +26,11 @@ public class Organization extends AuditableEntity {
     private String fullName;
 
     @OneToOne
-    @JoinColumn(name="MAIN_LOCATION_ID", nullable = false)
+    @JoinColumn(name="MAIN_LOCATION_ID")
     private Location mainOfficeLocation;
 
     @OneToOne
-    @JoinColumn(name="MAIN_CONTACT_ID", nullable = false)
+    @JoinColumn(name="MAIN_CONTACT_ID")
     private Contact mainContact;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "organization")

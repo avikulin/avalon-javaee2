@@ -1,33 +1,35 @@
 package ViewModels.TableViews.DTO;
 
+import Common.Annotations.UserCaption;
 import DAL.Annotations.*;
 
 @SourceEntity(entityName = "Country")
 public class CountryTableRowDTO {
+    @UserCaption(value = "Идентификатор")
     @SourceField(fieldSource = "", fieldName = "id")
     @CtorParam(position = 1)
     private final String id;
 
     @Filterable
-    @UserCaption(caption = "Код")
+    @UserCaption(value = "Код")
     @SourceField(fieldSource = "Country", fieldName = "code")
     @CtorParam(position = 2)
     private final String code;
 
     @Filterable
-    @UserCaption(caption = "Название")
+    @UserCaption(value = "Название")
     @SourceField(fieldSource = "Country", fieldName = "shortName")
     @CtorParam(position = 3)
     private final String shortName;
 
     @Filterable
-    @UserCaption(caption = "Полное наименование")
+    @UserCaption(value = "Полное наименование")
     @SourceField(fieldSource = "Country", fieldName = "fullName")
     @CtorParam(position = 4)
     private final String fullName;
 
     @Filterable
-    @UserCaption(caption = "Регион")
+    @UserCaption(value = "Регион")
     @SourceField(fieldSource = "Country", fieldName = "region")
     @CtorParam(position = 5)
     private final String region;

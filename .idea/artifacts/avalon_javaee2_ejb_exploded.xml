@@ -4,6 +4,7 @@
     <root id="root">
       <element id="javaee-facet-resources" facet="avalon-javaee2/ejb/EJB" />
       <element id="module-output" name="avalon-javaee2" />
+      <element id="dir-copy" path="$PROJECT_DIR$/src/main/resources/SQL/DEMO-DATA" />
     </root>
   </artifact>
 </component>

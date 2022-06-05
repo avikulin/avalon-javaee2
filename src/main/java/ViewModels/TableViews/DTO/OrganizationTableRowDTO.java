@@ -1,77 +1,79 @@
 package ViewModels.TableViews.DTO;
 
+import Common.Annotations.UserCaption;
 import DAL.Annotations.*;
 
 import java.util.StringJoiner;
 
 @SourceEntity(entityName = "Organization")
 public class OrganizationTableRowDTO {
+    @UserCaption(value = "Идентификатор")
     @SourceField(fieldSource = "Organization", fieldName = "id")
     @CtorParam(position = 1)
     private final Long id;
 
     @Filterable
-    @UserCaption(caption = "Наименование организации")
+    @UserCaption(value = "Наименование организации")
     @SourceField(fieldSource = "Organization", fieldName = "fullName")
     @CtorParam(position = 2)
     private final String fullName;
 
     @Filterable
-    @UserCaption(caption = "Город")
+    @UserCaption(value = "Город")
     @SourceField(fieldSource = "Location", fieldName = "locCity", fieldProjectionPath = "mainOfficeLocation.locCity")
     @CtorParam(position = 3)
     private final String locCity;
 
     @Filterable
-    @UserCaption(caption = "Улица")
+    @UserCaption(value = "Улица")
     @SourceField(fieldSource = "Location", fieldName = "locStreet", fieldProjectionPath = "mainOfficeLocation.locStreet")
     @CtorParam(position = 4)
     private final String locStreet;
 
     @Filterable
-    @UserCaption(caption = "Номер дома")
+    @UserCaption(value = "Номер дома")
     @SourceField(fieldSource = "Location", fieldName = "locHouseNumber", fieldProjectionPath = "mainOfficeLocation.locHouseNumber")
     @CtorParam(position = 5)
     private final int locHouseNumber;
 
     @Filterable
-    @UserCaption(caption = "Номер строения")
+    @UserCaption(value = "Номер строения")
     @SourceField(fieldSource = "Location", fieldName = "locBuilding", fieldProjectionPath = "mainOfficeLocation.locBuilding")
     @CtorParam(position = 6)
     private final int locBuilding;
 
     @Filterable
-    @UserCaption(caption = "Номер квартиры")
+    @UserCaption(value = "Номер квартиры")
     @SourceField(fieldSource = "Location", fieldName = "locApartmentNumber", fieldProjectionPath = "mainOfficeLocation.locApartmentNumber")
     @CtorParam(position = 7)
     private final int locApartmentNumber;
 
     @Filterable
-    @UserCaption(caption = "Фамилия")
+    @UserCaption(value = "Фамилия")
     @SourceField(fieldSource = "Contact", fieldName = "lastName", fieldProjectionPath = "mainContact.lastName")
     @CtorParam(position = 8)
     private final String lastName;
 
     @Filterable
-    @UserCaption(caption = "Имя")
+    @UserCaption(value = "Имя")
     @SourceField(fieldSource = "Contact", fieldName = "firstName", fieldProjectionPath = "mainContact.firstName")
     @CtorParam(position = 9)
     private final String firstName;
 
     @Filterable
-    @UserCaption(caption = "Отчество")
+    @UserCaption(value = "Отчество")
     @SourceField(fieldSource = "Contact", fieldName = "middleName", fieldProjectionPath = "mainContact.middleName")
     @CtorParam(position = 10)
     private final String middleName;
 
     @Filterable
-    @UserCaption(caption = "Отчество")
+    @UserCaption(value = "Отчество")
     @SourceField(fieldSource = "Contact", fieldName = "phoneNumber", fieldProjectionPath = "mainContact.phoneNumber")
     @CtorParam(position = 11)
     private final String phoneNumber;
 
     @Filterable
-    @UserCaption(caption = "Отчество")
+    @UserCaption(value = "Отчество")
     @SourceField(fieldSource = "Contact", fieldName = "emailAddress", fieldProjectionPath = "mainContact.emailAddress")
     @CtorParam(position = 12)
     private final String emailAddress;

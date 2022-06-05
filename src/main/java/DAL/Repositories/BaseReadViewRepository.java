@@ -1,12 +1,14 @@
 package DAL.Repositories;
 
+import Common.Annotations.UserCaption;
 import Common.Contracts.FieldDef;
 import Common.FieldDefImpl;
+import Common.IpAddress;
 import DAL.Annotations.*;
 import DAL.Contracts.Repository.ReadViewRepository;
 import DAL.Utils.Filter.Contracts.FilterDef;
-import DAL.Utils.Filter.Contracts.FilterExpression;
 import DAL.Utils.Filter.Enums.CriteriaType;
+import DAL.Utils.Filter.Enums.PredicateType;
 import DAL.Utils.Filter.FilterDefImpl;
 
 import javax.persistence.EntityManager;
@@ -17,13 +19,16 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class BaseReadViewRepository<T> implements ReadViewRepository<T> {
+    private static final String ROOT_ENTITY_ALIAS = "e1";
+
     private final EntityManager entityManager;
     private final Class<T> clazz;
     private final Map<Integer, FieldDef> fieldMap;
-    private final Map<String, String> entityMap;
     private List<String> projectionExpressionTokens;
-    private List<String> fromExpressionTokens;
+
     private final Map<String, FieldDef> filterableFields;
+    private final Deque<Object> filterParams;
+    private final Deque<String> filterTokens;
     private String query;
 
     public BaseReadViewRepository(EntityManager entityManager, Class<T> clazz) {
@@ -32,11 +37,10 @@ public class BaseReadViewRepository<T> implements ReadViewRepository<T> {
         this.entityManager = entityManager;
         this.clazz = clazz;
         this.projectionExpressionTokens = new ArrayList<>();
-        this.fromExpressionTokens = new ArrayList<>();
         this.filterableFields = new HashMap<>();
         this.fieldMap = new TreeMap<>();
-        this.entityMap = new HashMap<>();
-        prepareJpql();
+        this.filterParams = new ArrayDeque<>();
+        this.filterTokens = new ArrayDeque<>();
     }
 
     private void prepareJpql(){
@@ -65,10 +69,10 @@ public class BaseReadViewRepository<T> implements ReadViewRepository<T> {
                 throw new IllegalStateException("Illegal field annotations detected");
             }
 
-            String caption = captionAttr[0].caption();
+            String caption = captionAttr[0].value();
             SourceField source = sourceAttr[0];
             String entity = source.fieldSource();
-            String alias = registerEntity(entity);
+            String alias = ROOT_ENTITY_ALIAS;
             String field = source.fieldName();
             String path = source.fieldProjectionPath().isEmpty() ? source.fieldName() : source.fieldProjectionPath();
 
@@ -83,31 +87,31 @@ public class BaseReadViewRepository<T> implements ReadViewRepository<T> {
             }
         }
 
-        this.fromExpressionTokens = this.entityMap.entrySet()
-                                                    .stream()
-                                                        .map(e->e.getKey()+" "+e.getValue())
-                                                            .collect(Collectors.toList());
-        String rootAlias = this.entityMap.get(rootEntityName);
         this.projectionExpressionTokens = this.fieldMap.entrySet()
                                                     .stream()
-                                                        .map(e -> rootAlias+"."+e.getValue().getProjectionPath())
+                                                        .map(e -> ROOT_ENTITY_ALIAS
+                                                                    +"."+e.getValue().getProjectionPath())
                                                                     .collect(Collectors.toList());
         this.query = "select new "
                 .concat(ctor.getName())
                 .concat("(")
                 .concat(String.join(",",this.projectionExpressionTokens))
                 .concat(")");
-        this.query = this.query.concat(" from ").concat(String.join(", ", this.fromExpressionTokens));
-    }
 
-    private String registerEntity(String entity){
-        String value = entityMap.get(entity);
-        if (value == null){
-            int count = entityMap.size() + 1;
-            value = "e" + count;
-            this.entityMap.put(entity, value);
+        this.query = this.query
+                .concat(" from ")
+                .concat(rootEntityName)
+                .concat(" ")
+                .concat(ROOT_ENTITY_ALIAS);
+
+        StringJoiner whereExpr = new StringJoiner(" AND ");
+        while (!this.filterTokens.isEmpty()) {
+            whereExpr.add(this.filterTokens.pop());
         }
-        return value;
+
+        if (whereExpr.length() > 0) {
+            this.query = this.query.concat(" WHERE ").concat(whereExpr.toString());
+        }
     }
 
     @Override
@@ -122,13 +126,79 @@ public class BaseReadViewRepository<T> implements ReadViewRepository<T> {
     }
 
     @Override
-    public List<T> getAll(FilterExpression filterExpression) {
+    public List<T> getAll() {
+        prepareJpql();
         TypedQuery<T> queryDef = entityManager.createQuery(this.query, this.clazz);
+        while (!this.filterParams.isEmpty()){
+            int pos = this.filterParams.size();
+            Object val = this.filterParams.pop();
+            queryDef.setParameter(pos, val);
+        }
+
         return queryDef.getResultList();
     }
 
     public String getFilterableFields() {
         return filterableFields.values().stream().map(Object::toString).collect(Collectors.joining(", "));
+    }
+
+    public void addFilter(String fieldName, PredicateType predicate, Object value){
+        Objects.requireNonNull(fieldName, "Field name passed must be not null");
+        Objects.requireNonNull(predicate, "Predicate passed must be not null");
+        Objects.requireNonNull(value, "Criteria value passed must be not null");
+
+        FieldDef field = this.filterableFields.get(fieldName);
+        Objects.requireNonNull(field, "Field name passed is not filterable");
+
+        /*if (!field.getClassRef().equals(value.getClass())){
+            throw new IllegalArgumentException("Criteria type must be ".concat(field.getClassRef().getSimpleName()));
+        }*/
+
+        if (!predicate.equals(PredicateType.EQ) &&
+                (field.getClassRef().equals(String.class) || field.getClassRef().equals(IpAddress.class))){
+            throw new IllegalStateException(
+                    String.format("Predicate \"%s\"is not applicable to field type %s",
+                                   predicate.getOperator(),
+                                   field.getClassRef().getSimpleName()));
+        }
+        int stackPos = this.filterParams.size() + 1; // длина стэка, начиная с единицы
+
+        this.filterTokens.push(
+                String.format("%s.%s %s ?%d",
+                        ROOT_ENTITY_ALIAS,
+                        field.getProjectionPath(),
+                        predicate.getOperator(),
+                        stackPos)
+        );
+        this.filterParams.push(value);
+    }
+
+    public void addFilter(String fieldName, String pattern){
+        Objects.requireNonNull(fieldName, "Field name passed must be not null");
+        Objects.requireNonNull(pattern, "Field name passed must be not null");
+
+        FieldDef field = this.filterableFields.get(fieldName);
+        Objects.requireNonNull(field, "Field name passed is not filterable");
+
+        if (!field.getClassRef().equals(String.class) && !field.getClassRef().equals(IpAddress.class)){
+            throw new IllegalStateException(
+                    String.format("Pattern predicate is not applicable to field type %s",
+                                   field.getClassRef().getSimpleName()));
+        }
+        int stackPos = this.filterParams.size() + 1; // длина стэка, начиная с единицы
+        this.filterTokens.push(
+                String.format("%s.%s LIKE ?%d",
+                        ROOT_ENTITY_ALIAS,
+                        field.getProjectionPath(),
+                        stackPos)
+        );
+        this.filterParams.push("%"+pattern+"%");
+    }
+
+    @Override
+    public void clearFilters() {
+        this.filterParams.clear();
+        this.filterTokens.clear();
     }
 
     public String getQuery() {

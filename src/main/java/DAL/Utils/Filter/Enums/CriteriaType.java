@@ -7,8 +7,7 @@ import java.util.Arrays;
 public enum CriteriaType {
     STRING_PATTERN(new Class<?>[]{String.class}),
     VALUE_PREDICATE(new Class<?>[]{Integer.class, Double.class}),
-    DATA_PREDICATE(new Class<?>[]{Date.class}),
-    IP_MASK(new Class<?>[]{IpAddress.class});
+    DATE_PREDICATE(new Class<?>[]{Date.class});
 
     private final Class<?>[] supportedOperands;
 
@@ -25,17 +24,12 @@ public enum CriteriaType {
         }
 
         if (type.equals(Date.class)){
-            return CriteriaType.DATA_PREDICATE;
+            return CriteriaType.DATE_PREDICATE;
         }
 
-        if (type.equals(String.class)){
+        if(type.equals(String.class) || type.equals(IpAddress.class)){
             return CriteriaType.STRING_PATTERN;
         }
-
-        if (type.equals(IpAddress.class)){
-            return CriteriaType.IP_MASK;
-        }
-
         throw new IllegalArgumentException("Unsupported type passed: "+type.getName());
     }
 }

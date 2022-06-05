@@ -1,57 +1,59 @@
 package ViewModels.TableViews.DTO;
 
+import Common.Annotations.UserCaption;
 import DAL.Annotations.*;
+import DAL.DataEntities.Enums.OsiLayer;
 
 @SourceEntity(entityName = "Model")
 public class ModelTableRowDTO {
     @Filterable()
     @SourceField(fieldSource = "Model", fieldName = "modelCode")
-    @UserCaption(caption = "Код")
+    @UserCaption(value = "Код")
     @CtorParam(position = 1)
     private final String code;
 
-    @UserCaption(caption = "Описание")
+    @UserCaption(value = "Описание")
     @SourceField(fieldSource = "Model", fieldName = "modelDescription")
     @CtorParam(position = 2)
     private final String description;
 
     @Filterable()
-    @UserCaption(caption = "Производитель")
+    @UserCaption(value = "Производитель")
     @SourceField(fieldSource = "Vendor", fieldName = "name", fieldProjectionPath = "vendor.name")
     @CtorParam(position = 3)
     private final String vendor;
 
     @Filterable()
-    @UserCaption(caption = "Страна")
+    @UserCaption(value = "Страна")
     @SourceField(fieldSource = "Country", fieldName = "shortName", fieldProjectionPath = "vendor.countryOfOrigin.shortName")
     @CtorParam(position = 4)
     private final String country;
 
-    @UserCaption(caption = "Уровень OSI")
+    @UserCaption(value = "Уровень OSI")
     @SourceField(fieldSource = "Model", fieldName = "layerNum")
     @CtorParam(position = 5)
-    private final String layer;
+    private final OsiLayer layer;
 
     @Filterable
-    @UserCaption(caption = "Порты 100Мб/с")
+    @UserCaption(value = "Порты 100Мб/с")
     @SourceField(fieldSource = "Model", fieldName = "num100MbpsPorts")
     @CtorParam(position = 6)
     private final int num100MbpsPorts;
 
     @Filterable
-    @UserCaption(caption = "Порты 10Гб/с")
+    @UserCaption(value = "Порты 10Гб/с")
     @SourceField(fieldSource = "Model", fieldName = "num10GbpsPorts")
     @CtorParam(position = 7)
     private final int num10GbpsPorts;
 
     @Filterable
-    @UserCaption(caption = "Порты PoE")
+    @UserCaption(value = "Порты PoE")
     @SourceField(fieldSource = "Model", fieldName = "numPoEPorts")
     @CtorParam(position = 8)
     private final int numPoEPorts;
 
     public ModelTableRowDTO(String code, String description, String vendor, String country,
-                            String layer, int num100MbpsPorts, int num10GbpsPorts, int numPoEPorts) {
+                            OsiLayer layer, int num100MbpsPorts, int num10GbpsPorts, int numPoEPorts) {
         this.code = code;
         this.description = description;
         this.vendor = vendor;
@@ -78,19 +80,19 @@ public class ModelTableRowDTO {
         return country;
     }
 
-    public String getLayer() {
+    public OsiLayer getLayer() {
         return layer;
     }
 
-    public int getNum100MbpsPorts() {
+    public Integer getNum100MbpsPorts() {
         return num100MbpsPorts;
     }
 
-    public int getNum10GbpsPorts() {
+    public Integer getNum10GbpsPorts() {
         return num10GbpsPorts;
     }
 
-    public int getNumPoEPorts() {
+    public Integer getNumPoEPorts() {
         return numPoEPorts;
     }
 

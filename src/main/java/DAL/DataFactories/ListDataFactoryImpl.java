@@ -43,7 +43,7 @@ public class ListDataFactoryImpl implements ListDataFactory {
         return new BaseListViewRepository<>(repository,
                                             ModelTableRowDTO::getCode,
                                             Arrays.asList(ModelTableRowDTO::getCode,
-                                                          ModelTableRowDTO::getLayer,
+                                                          e-> e.getLayer().getDescription(),
                                                           ModelTableRowDTO::getVendor));
     }
 

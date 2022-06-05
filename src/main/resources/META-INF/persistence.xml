@@ -10,8 +10,9 @@
             <property name="javax.persistence.jdbc.user" value="postgres" />
             <property name="javax.persistence.jdbc.password" value="Pa$$w0rd" />
             <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
-            <property name="eclipselink.ddl-generation" value="drop-and-create-tables"/>
+<!--            <property name="eclipselink.ddl-generation" value="drop-and-create-tables"/>-->
             <property name="eclipselink.ddl-generation.output-mode" value="database"/>
+            <property name="javax.persistence.sql-load-script-source" value="SQL\DEMO-DATA\demo-data-load.sql"/>
         </properties>
     </persistence-unit>
 </persistence>

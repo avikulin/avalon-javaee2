@@ -1,40 +1,41 @@
 package ViewModels.TableViews.DTO;
 
+import Common.Annotations.UserCaption;
 import DAL.Annotations.*;
 
 @SourceEntity(entityName = "Contact")
 public class ContactsTableRowDTO {
-
+    @UserCaption(value = "Идентификатор")
     @SourceField(fieldSource = "Contact", fieldName = "id")
     @CtorParam(position = 1)
     private final Long id;
 
     @Filterable
-    @UserCaption(caption = "Фамилия")
+    @UserCaption(value = "Фамилия")
     @SourceField(fieldSource = "Contact", fieldName = "lastName")
     @CtorParam(position = 2)
     private final String lastName;
 
     @Filterable
-    @UserCaption(caption = "Имя")
+    @UserCaption(value = "Имя")
     @SourceField(fieldSource = "Contact", fieldName = "firstName")
     @CtorParam(position = 3)
     private final String firstName;
 
     @Filterable
-    @UserCaption(caption = "Отчество")
+    @UserCaption(value = "Отчество")
     @SourceField(fieldSource = "Contact", fieldName = "middleName")
     @CtorParam(position = 4)
     private final String middleName;
 
     @Filterable
-    @UserCaption(caption = "Телефон")
+    @UserCaption(value = "Телефон")
     @SourceField(fieldSource = "Contact", fieldName = "phoneNumber")
     @CtorParam(position = 5)
     private final String phoneNumber;
 
     @Filterable
-    @UserCaption(caption = "Эл. почта")
+    @UserCaption(value = "Эл. почта")
     @SourceField(fieldSource = "Contact", fieldName = "emailAddress")
     @CtorParam(position = 6)
     private final String emailAddress;

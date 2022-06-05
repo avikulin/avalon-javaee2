@@ -37,8 +37,15 @@ public class Location extends AuditableEntity {
     @Column(name = "LOC_APP_NUM", nullable = false)
     private int locApartmentNumber;
 
-    @Column(name = "LOC_INFO", nullable = true, length = 200)
+    @Column(name = "LOC_INFO", length = 200)
     private String locInfo;
+
+    public Location() {
+    }
+
+    public Location(Long id) {
+        this.id = id;
+    }
 
     public Long getId() {
         return id;
