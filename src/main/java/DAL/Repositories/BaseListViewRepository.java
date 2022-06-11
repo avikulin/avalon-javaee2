@@ -33,6 +33,7 @@ public class BaseListViewRepository<T,K> implements ListRepository<T,K> {
 
     @Override
     public Map<K, String> getItems() {
+        this.readViewRepository.useDistinct(true);
         List<T> dataItems = this.readViewRepository.getAll();
         return dataItems
                 .stream()

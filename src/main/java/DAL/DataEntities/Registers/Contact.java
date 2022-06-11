@@ -1,6 +1,6 @@
 package DAL.DataEntities.Registers;
 
-import Common.AuditableEntity;
+import Common.Classes.AuditableEntity;
 import DAL.DataEntities.Dictionaries.Sex;
 
 import javax.persistence.*;

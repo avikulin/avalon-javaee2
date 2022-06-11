@@ -3,10 +3,14 @@ package DAL.DataFactories;
 import DAL.Contracts.DataFactory.ListDataFactory;
 import DAL.Contracts.Repository.ListRepository;
 import DAL.Contracts.Repository.ReadViewRepository;
+import DAL.DataEntities.Registers.Location;
 import DAL.Repositories.BaseListViewRepository;
-import ViewModels.TableViews.DTO.*;
+import ViewModels.TableViewModels.DTO.*;
+import ViewModels.TableViewModels.Location.DTO.CitiesListItemDTO;
+import ViewModels.TableViewModels.Location.DTO.LocationTableRowDTO;
 
 import javax.ejb.Stateless;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 @Stateless
@@ -18,6 +22,18 @@ public class ListDataFactoryImpl implements ListDataFactory {
         return new BaseListViewRepository<>(repository,
                                             OrganizationTableRowDTO::getId,
                                             OrganizationTableRowDTO::getFullName);
+    }
+
+    @Override
+    public ListRepository<LocationTableRowDTO, Long> getLocationsListRepo(
+            ReadViewRepository<LocationTableRowDTO> repository) {
+        return new BaseListViewRepository<LocationTableRowDTO, Long>(repository,
+                LocationTableRowDTO::getId,
+                Arrays.asList(
+                        LocationTableRowDTO::getOrganizationName,
+                        LocationTableRowDTO::getName,
+                        LocationTableRowDTO::getLocCity
+                ));
     }
 
     @Override
@@ -41,10 +57,10 @@ public class ListDataFactoryImpl implements ListDataFactory {
     @Override
     public ListRepository<ModelTableRowDTO, String> getModelListRepo(ReadViewRepository<ModelTableRowDTO> repository) {
         return new BaseListViewRepository<>(repository,
-                                            ModelTableRowDTO::getCode,
+                                            ModelTableRowDTO::getId,
                                             Arrays.asList(ModelTableRowDTO::getCode,
-                                                          e-> e.getLayer().getDescription(),
-                                                          ModelTableRowDTO::getVendor));
+                                                          ModelTableRowDTO::getVendor,
+                                                          e-> e.getLayer().getDescription()));
     }
 
     @Override
@@ -61,5 +77,12 @@ public class ListDataFactoryImpl implements ListDataFactory {
         return new BaseListViewRepository<>(repository,
                                             SexTableRowDTO::getId,
                                             SexTableRowDTO::getName);
+    }
+
+    @Override
+    public ListRepository<CitiesListItemDTO, String> getCityListRepo(ReadViewRepository<CitiesListItemDTO> repository) {
+        return new BaseListViewRepository<CitiesListItemDTO, String>(repository,
+                                                                     CitiesListItemDTO::getLocCity,
+                                                                     CitiesListItemDTO::getLocCity);
     }
 }

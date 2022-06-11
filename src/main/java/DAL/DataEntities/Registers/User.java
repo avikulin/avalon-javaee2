@@ -1,6 +1,6 @@
 package DAL.DataEntities.Registers;
 
-import Common.AuditableEntity;
+import Common.Classes.AuditableEntity;
 
 import javax.persistence.*;
 import java.util.List;
@@ -21,9 +21,35 @@ public class User  extends AuditableEntity {
     @Column(name = "LOGO_URL", nullable = false, length = 200)
     private String logoUrl;
 
-    @Transient
-    private List<String> roles;
+    public String getLogin() {
+        return login;
+    }
 
-    @Transient
-    private List<String> privileges;
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getLogoUrl() {
+        return logoUrl;
+    }
+
+    public void setLogoUrl(String logoUrl) {
+        this.logoUrl = logoUrl;
+    }
 }

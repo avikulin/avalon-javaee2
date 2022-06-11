@@ -1,7 +1,7 @@
 package DAL.DataEntities.Registers;
 
-import Common.AuditableEntity;
-import Common.IpAddress;
+import Common.Classes.AuditableEntity;
+import Common.Classes.IpAddress;
 import DAL.DataEntities.Dictionaries.Model;
 
 import javax.persistence.*;
@@ -11,10 +11,14 @@ import javax.persistence.*;
 public class Equipment  extends AuditableEntity {
     @Id
     @GeneratedValue
+    @Column(name = "UNIT_ID")
     private Long id;
 
     @Column(name = "UNIT_CODE", nullable = false, length = 50)
     private String code;
+
+    @Column(name = "UNIT_DESC", nullable = true, length = 250)
+    private String description;
 
     @OneToOne
     @JoinColumn(name = "MODEL_ID", nullable = false)
@@ -40,6 +44,14 @@ public class Equipment  extends AuditableEntity {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Model getModel() {

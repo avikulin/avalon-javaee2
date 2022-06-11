@@ -1,7 +1,7 @@
 <nav id="sidebar" class="active">
     <ul class="list-unstyled components mb-5">
         <li class="active">
-            <a href="#"><span class="fa fa-home"></span> Начало</a>
+            <a href="/"><span class="fa fa-home"></span> Начало</a>
         </li>
 
         <li>
@@ -9,11 +9,11 @@
         </li>
 
         <li>
-            <a href="#"><span class="fa fa-wifi"></span> Устройства</a>
+            <a href="${pageContext.request.contextPath}/equipment_units"><span class="fa fa-wifi"></span> Устройства</a>
         </li>
 
         <li>
-            <a href="#"><span class="fa fa-user"></span> Клиенты</a>
+            <a href="${pageContext.request.contextPath}/locations"><span class="fa fa-user"></span> Клиенты</a>
         </li>
 
         <li>

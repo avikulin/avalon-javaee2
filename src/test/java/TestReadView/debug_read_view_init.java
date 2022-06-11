@@ -2,7 +2,7 @@ package TestReadView;
 
 import DAL.Repositories.BaseReadViewRepository;
 import DAL.Utils.Filter.Enums.PredicateType;
-import ViewModels.TableViews.DTO.ModelTableRowDTO;
+import ViewModels.TableViewModels.DTO.ModelTableRowDTO;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;

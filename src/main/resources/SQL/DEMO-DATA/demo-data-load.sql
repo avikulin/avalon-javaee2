@@ -1,3 +1,5 @@
+INSERT INTO public.reg_users(login, description, full_name, logo_url) VALUES ('userOne', '„Любой дурак может написать программу, которую поймёт компилятор. Хорошие программисты пишут программы, которые смогут понять другие программисты.“ —  Мартин Фаулер', 'Незлобный Феофан Савельевич', 'https://cropas.by/wp-content/uploads/2015/05/admin.jpg');
+
 INSERT INTO public.dict_organization_types (type_id, type_description) values ('ООО', 'Общество с ограниченной ответственностью');
 INSERT INTO public.dict_organization_types (type_id, type_description) values ('ПАО', 'Публичное акционерное общество');
 INSERT INTO public.dict_organization_types (type_id, type_description) values ('LTD', 'Limited liability company');
@@ -8,24 +10,6 @@ INSERT INTO public.dict_sex (sex_id, sex_description) values ('Ж', 'Женск�
 
 INSERT INTO public.reg_org_contacts(contact_id, email, first_name, last_name, middle_name, phone_num, sex_id) VALUES (7000, 'asvikulin@mail.ru', 'Андрей', 'Сергеевич', 'Викулин', '+7 962 981-00-13', 'M');
 INSERT INTO public.reg_org_contacts(contact_id, email, first_name, last_name, middle_name, phone_num, sex_id) VALUES (7001, 'vickulinaanastasia@yandex.ru', 'Анастасия', 'Сергеевна', 'Викулина', '+7 966 016-98-17', 'Ж');
-
-INSERT INTO public.reg_organizations(org_id, org_full_name, org_name, main_contact_id, main_location_id, org_type) VALUES (5000, 'ГК Систематика, ОАО', 'ГК Систематика', null, null, 'ПАО');
-INSERT INTO public.reg_organizations(org_id, org_full_name, org_name, main_contact_id, main_location_id, org_type) VALUES (5001, 'АНД Проджект, ООО', 'АНД Проджект', null, null, 'ООО');
-INSERT INTO public.reg_organizations(org_id, org_full_name, org_name, main_contact_id, main_location_id, org_type) VALUES (5002, 'Tops Business Integrator, ООО', 'Tops Business Integrator', null, null, 'ООО');
-INSERT INTO public.reg_organizations(org_id, org_full_name, org_name, main_contact_id, main_location_id, org_type) VALUES (5003, 'Стэп Лоджик, ООО', 'Стэп Лоджик', null, null, 'ООО');
-INSERT INTO public.reg_organizations(org_id, org_full_name, org_name, main_contact_id, main_location_id, org_type) VALUES (5004, 'Энсис Технолоджис, ООО', 'Энсис Технолоджис', null, null, 'ООО');
-
-INSERT INTO public.reg_org_locations(loc_id, loc_app_num, loc_build_num, loc_city, loc_house_num, loc_info, loc_name, loc_street, organization_id) VALUES (9000, 1, 2, 'Санкт-Петербург', 68, 'Вход со стороны Б. Сампсониевского пр.', 'Главный офис', 'Сампсониевский проспект', 5001);
-INSERT INTO public.reg_org_locations(loc_id, loc_app_num, loc_build_num, loc_city, loc_house_num, loc_info, loc_name, loc_street, organization_id) VALUES (9001, 18, 1, 'Москва', 31, 'Вход от м. Бауманская', 'Офис разработки', 'Новорязанская ул', 5000);
-INSERT INTO public.reg_org_locations(loc_id, loc_app_num, loc_build_num, loc_city, loc_house_num, loc_info, loc_name, loc_street, organization_id) VALUES (9002, 18, 1, 'Москва', 31, 'Вход от м. Бауманская', 'Офис разработки', 'Новорязанская ул', 5002);
-INSERT INTO public.reg_org_locations(loc_id, loc_app_num, loc_build_num, loc_city, loc_house_num, loc_info, loc_name, loc_street, organization_id) VALUES (9003, 18, 1, 'Москва', 31, 'Вход от м. Бауманская', 'Офис разработки', 'Новорязанская ул', 5003);
-INSERT INTO public.reg_org_locations(loc_id, loc_app_num, loc_build_num, loc_city, loc_house_num, loc_info, loc_name, loc_street, organization_id) VALUES (9004, 18, 1, 'Москва', 31, 'Вход от м. Бауманская', 'Офис разработки', 'Новорязанская ул', 5004);
-
-update public.reg_organizations set main_location_id = 9001, main_contact_id = 7001 where org_id=5000;
-update public.reg_organizations set main_location_id = 9000, main_contact_id = 7000 where org_id=5001;
-update public.reg_organizations set main_location_id = 9002, main_contact_id = 7001 where org_id=5002;
-update public.reg_organizations set main_location_id = 9003, main_contact_id = 7001 where org_id=5003;
-update public.reg_organizations set main_location_id = 9004, main_contact_id = 7001 where org_id=5004;
 
 INSERT INTO dict_countries (country_id, country_code, short_name, full_name, region) VALUES ('AB','ABH','Абхазия','Республика Абхазия','Закавказье');
 INSERT INTO dict_countries (country_id, country_code, short_name, full_name, region) VALUES ('AU','AUS','Австралия','','Австралия и Новая Зеландия');
@@ -279,6 +263,19 @@ INSERT INTO dict_countries (country_id, country_code, short_name, full_name, reg
 INSERT INTO dict_countries (country_id, country_code, short_name, full_name, region) VALUES ('JM','JAM','Ямайка','','Карибский бассейн');
 INSERT INTO dict_countries (country_id, country_code, short_name, full_name, region) VALUES ('JP','JPN','Япония','','Восточная Азия');
 
+
+INSERT INTO public.reg_organizations(org_id, org_full_name, org_name, org_type, inn_code, kpp_code, ogrn_code, web_site, country_id) VALUES (5000, 'ГК Систематика, ПАО', 'ГК Систематика', 'ПАО', '7701768139','770101001','1087746148764','https://gcs.ru','RU');
+INSERT INTO public.reg_organizations(org_id, org_full_name, org_name, org_type, inn_code, kpp_code, ogrn_code, web_site, country_id) VALUES (5001, 'АНД Проджект, ООО', 'АНД Проджект', 'ООО', '7811060733','781101001','45576269','http://www.andproject.ru/','RU');
+INSERT INTO public.reg_organizations(org_id, org_full_name, org_name, org_type, inn_code, kpp_code, ogrn_code, web_site, country_id) VALUES (5002, 'Tops Business Integrator, ООО', 'Tops Business Integrator', 'ООО', '7811060733','773401001','1027806073789','https://www.topsbi.ru/','RU');
+INSERT INTO public.reg_organizations(org_id, org_full_name, org_name, org_type, inn_code, kpp_code, ogrn_code, web_site, country_id) VALUES (5003, 'Стэп Лоджик, ООО', 'Стэп Лоджик', 'ООО', '7730081654','770401001','1027700320922','https://step.ru','RU');
+INSERT INTO public.reg_organizations(org_id, org_full_name, org_name, org_type, inn_code, kpp_code, ogrn_code, web_site, country_id) VALUES (5004, 'Энсис Технолоджис, ООО', 'Энсис Технолоджис', 'ООО', '7703351615','770101001','1027703001864','https://www.ensyst.ru','RU');
+
+INSERT INTO public.reg_org_locations(loc_id, loc_app_num, loc_build_num, loc_city, loc_house_num, loc_info, loc_name, loc_street, organization_id) VALUES (9000, 416, 1, 'Москва', 6, 'Офисный парк Comcity', 'Главный офис', 'Киевское ш., 22-й км.', 5000);
+INSERT INTO public.reg_org_locations(loc_id, loc_app_num, loc_build_num, loc_city, loc_house_num, loc_info, loc_name, loc_street, organization_id) VALUES (9001, 1, 27, 'Санкт-Петербург', 68, 'Вход со стороны ул. А. Матросова', 'Офис разработки Microsoft', 'Сампсониевский проспект', 5001);
+INSERT INTO public.reg_org_locations(loc_id, loc_app_num, loc_build_num, loc_city, loc_house_num, loc_info, loc_name, loc_street, organization_id) VALUES (9002, 41, 1, 'Москва', 31, 'Вход от м. Бауманская', 'Офис разработки Oracle', 'Новорязанская ул', 5002);
+INSERT INTO public.reg_org_locations(loc_id, loc_app_num, loc_build_num, loc_city, loc_house_num, loc_info, loc_name, loc_street, organization_id) VALUES (9003, 516, 1, 'Казань', 296, 'Рядом с ТатТелекомом', 'Офис системной интеграции', 'Ершова ул', 5003);
+INSERT INTO public.reg_org_locations(loc_id, loc_app_num, loc_build_num, loc_city, loc_house_num, loc_info, loc_name, loc_street, organization_id) VALUES (9004, 484, 4, 'Москва', 4, 'БП «Румянцево»', 'Проектный офис «Нефтехимавтоматика»', 'Киевское шоссе, 22-й км.', 5004);
+
 INSERT INTO public.dict_vendors (vendor_id, vendor_name, web_site, country_id) values (1000, 'Zyxel Corp.', 'https://www.zyxel.com/ru/ru/homepage.shtml', 'US');
 INSERT INTO public.dict_vendors (vendor_id, vendor_name, web_site, country_id) values (1001, 'Cisco Systems, Inc.', 'https://www.cisco.com/c/en/us/index.html', 'US');
 INSERT INTO public.dict_vendors (vendor_id, vendor_name, web_site, country_id) values (1002, 'Hewlett Packard Enterprise Development LP', 'https://www.hpe.com/us/en/home.html', 'US');
@@ -295,3 +292,10 @@ INSERT INTO public.dict_models (id, image_url, layer_num, model_code, model_desc
 INSERT INTO public.dict_models (id, image_url, layer_num, model_code, model_description, ports_100mbps, ports_10gbps, ports_poe, vendor_id) values ('FF5950', 'https://www.karma-group.ru/upload/iblock/c12/HPE-FLEXFABRIC-5900.jpg', 3, 'FlexFabric 5950','48-портовый гигабитный L3 PoE коммутатор с 10G аплинком', 48, 18, 48, 1002);
 INSERT INTO public.dict_models (id, image_url, layer_num, model_code, model_description, ports_100mbps, ports_10gbps, ports_poe, vendor_id) values ('CX6000', 'https://www.itweek.ru/upload/iblock/fc5/fc5f997132b1868a349189bdd09646c0.jpg', 3, 'Aruba CX 6000', '48-портовый гигабитный L3 PoE коммутатор с 10G аплинком',48, 48, 48, 1002);
 
+INSERT INTO public.reg_equipment_units(id, unit_code, unit_desc, ip_addr, location_id, model_id) VALUES (7000, 'RT_INT_SEG_A', 'Роутер внутреннего сегмента. 1-й этаж', '10.0.1.1', 9000, 'XGS3700-24');
+INSERT INTO public.reg_equipment_units(id, unit_code, unit_desc, ip_addr, location_id, model_id) VALUES (7001, 'RT_INT_SEG_B',  'Роутер внутреннего сегмента. 2-й этаж', '10.0.2.1', 9000, 'XGS3700-48HP');
+INSERT INTO public.reg_equipment_units(id, unit_code, unit_desc, ip_addr, location_id, model_id) VALUES (7002, 'RT_INT_SEG_C',  'Роутер внутреннего сегмента. 3-й этаж', '10.0.3.1', 9000, 'XGS3700-48HP');
+INSERT INTO public.reg_equipment_units(id, unit_code, unit_desc, ip_addr, location_id, model_id) VALUES (7003, 'RT_EXT_INET_A',  'Роутер + МСЭ основного интернет-канала (Перерстар)', '10.16.5.12', 9000, 'XGS3700-24');
+INSERT INTO public.reg_equipment_units(id, unit_code, unit_desc, ip_addr, location_id, model_id) VALUES (7004, 'RT_EXT_INET_B',  'Роутер + МСЭ резервного интернет-канала (Синтерра)', '10.16.5.3', 9000, 'CX6000');
+INSERT INTO public.reg_equipment_units(id, unit_code, unit_desc, ip_addr, location_id, model_id) VALUES (7005, 'RT_EXT_FB_1',  'Роутер основного опт. канала в РЦОД', '10.16.6.22', 9000, 'FF5950');
+INSERT INTO public.reg_equipment_units(id, unit_code, unit_desc, ip_addr, location_id, model_id) VALUES (7005, 'RT_EXT_FB_2',  'Роутер резервного опт. канала в РЦОД', '10.16.6.19', 9000, 'FF5950');

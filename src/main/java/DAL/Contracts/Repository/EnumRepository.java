@@ -1,7 +1,7 @@
 package DAL.Contracts.Repository;
 
-import java.util.List;
+import java.util.Map;
 
 public interface EnumRepository<T extends Enum<T>> {
-    List<String> getAll();
+    Map<String, String> getAll();
 }

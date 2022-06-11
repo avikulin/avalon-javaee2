@@ -1,3 +1,4 @@
+<%@ page import="java.security.Principal" %>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
         <button type="button" id="sidebarCollapse" class="btn btn-primary">
@@ -5,24 +6,28 @@
             <span class="sr-only">Toggle Menu</span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="#">Модели</a></li>
-                <li class="breadcrumb-item"><a href="#">Cisco</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Cisco WPAN 500</li>
-            </ol>
+            <p class="lead" style="margin-left: 1em; margin-bottom: 0;">Система учета телекоммуникационного оборудования</p>
         </div>
         <div class="nav navbar-nav navbar-right">
             <div class="dropdown">
                 <a href="#" class="d-flex align-items-center justify-content-center link-dark text-decoration-none dropdown-toggle" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="bi-person-square" style="font-circle: bold; font-size: 1.8rem"></i>
-                    <p class="container-fluid" style="margin-bottom: 0px"> UserName </p>
+                    <p class="container-fluid" style="margin-bottom: 0px"> <%= getName(request) %> </p>
                 </a>
                 <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser">
-                    <li><a class="dropdown-item" href="#">Профиль</a></li>
+                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/user_info">Профиль</a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="#">Выход</a></li>
+                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/logout">Выход</a></li>
                 </ul>
             </div>
         </div>
     </div>
 </nav>
+<%!
+    private String getName(HttpServletRequest request) {
+        Principal user = request.getUserPrincipal();
+        if (user == null) return "<Гость>";
+        String name = user.getName();
+        return name;
+    }
+%>

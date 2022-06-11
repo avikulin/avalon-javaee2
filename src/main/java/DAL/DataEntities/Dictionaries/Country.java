@@ -1,6 +1,6 @@
 package DAL.DataEntities.Dictionaries;
 
-import Common.AuditableEntity;
+import Common.Classes.AuditableEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

@@ -1,9 +1,8 @@
 package DAL.DataEntities.Registers;
 
-import Common.AuditableEntity;
+import Common.Classes.AuditableEntity;
 
 import javax.persistence.*;
-import java.util.StringJoiner;
 
 @Entity
 @Table(name = "reg_org_locations", uniqueConstraints = {

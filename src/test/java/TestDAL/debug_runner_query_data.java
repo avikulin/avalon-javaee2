@@ -1,6 +1,6 @@
 package TestDAL;
 
-import Common.IpAddress;
+import Common.Classes.IpAddress;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;

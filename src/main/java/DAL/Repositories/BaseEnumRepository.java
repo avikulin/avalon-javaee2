@@ -1,12 +1,9 @@
 package DAL.Repositories;
 
-import DAL.Contracts.Repository.EnumRepository;
 import Common.Contracts.SelfDescriptable;
+import DAL.Contracts.Repository.EnumRepository;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class BaseEnumRepository<T extends Enum<T> & SelfDescriptable> implements EnumRepository<T> {
@@ -18,9 +15,14 @@ public class BaseEnumRepository<T extends Enum<T> & SelfDescriptable> implements
     }
 
     @Override
-    public List<String> getAll() {
+    public Map<String, String> getAll() {
         List<T> res = new ArrayList<>();
         T[] items = clazz.getEnumConstants();
-        return Arrays.stream(items).map(x-> x.getDescription()).collect(Collectors.toList());
+        return Arrays
+                .stream(items)
+                .collect(
+                        Collectors
+                                .toMap(x->x.toString(), x-> x.getDescription())
+                );
     }
 }

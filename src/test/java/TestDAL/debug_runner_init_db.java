@@ -1,6 +1,6 @@
 package TestDAL;
 
-import Common.IpAddress;
+import Common.Classes.IpAddress;
 import DAL.DataEntities.Dictionaries.*;
 import DAL.DataEntities.Enums.OsiLayer;
 import DAL.DataEntities.Registers.Contact;

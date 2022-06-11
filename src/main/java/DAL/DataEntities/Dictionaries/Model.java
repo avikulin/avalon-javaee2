@@ -1,6 +1,6 @@
 package DAL.DataEntities.Dictionaries;
 
-import Common.AuditableEntity;
+import Common.Classes.AuditableEntity;
 import DAL.DataEntities.Enums.OsiLayer;
 
 import javax.persistence.*;
@@ -10,7 +10,6 @@ import javax.persistence.*;
        uniqueConstraints = {@UniqueConstraint(name = "MODEL_VENDOR_UC", columnNames = {"MODEL_CODE","VENDOR_ID"})})
 public class Model extends AuditableEntity {
     @Id
-    @GeneratedValue
     private String id;
 
     @Column(name = "MODEL_CODE", nullable = false, scale = 100)

@@ -1,6 +1,7 @@
 package DAL.DataEntities.Registers;
 
-import Common.AuditableEntity;
+import Common.Classes.AuditableEntity;
+import DAL.DataEntities.Dictionaries.Country;
 import DAL.DataEntities.Dictionaries.OrgType;
 
 import javax.persistence.*;
@@ -25,13 +26,21 @@ public class Organization extends AuditableEntity {
     @Column(name = "ORG_FULL_NAME", nullable = false, length = 250)
     private String fullName;
 
-    @OneToOne
-    @JoinColumn(name="MAIN_LOCATION_ID")
-    private Location mainOfficeLocation;
+    @Column(name = "INN_CODE", nullable = false, length = 12)
+    private String innCode;
+
+    @Column(name = "KPP_CODE", nullable = false, length = 9)
+    private String kppCode;
+
+    @Column(name = "OGRN_CODE", nullable = false, length = 13)
+    private String ogrnCode;
+
+    @Column(name = "WEB_SITE", nullable = false, length = 250)
+    private String webSiteUrl;
 
     @OneToOne
-    @JoinColumn(name="MAIN_CONTACT_ID")
-    private Contact mainContact;
+    @JoinColumn(name="COUNTRY_ID")
+    private Country countryOfRegistration;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "organization")
     private List<Location> locations = new ArrayList<>();
@@ -58,6 +67,46 @@ public class Organization extends AuditableEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getInnCode() {
+        return innCode;
+    }
+
+    public void setInnCode(String innCode) {
+        this.innCode = innCode;
+    }
+
+    public String getKppCode() {
+        return kppCode;
+    }
+
+    public void setKppCode(String kppCode) {
+        this.kppCode = kppCode;
+    }
+
+    public String getOgrnCode() {
+        return ogrnCode;
+    }
+
+    public void setOgrnCode(String ogrnCode) {
+        this.ogrnCode = ogrnCode;
+    }
+
+    public String getWebSiteUrl() {
+        return webSiteUrl;
+    }
+
+    public void setWebSiteUrl(String webSiteUrl) {
+        this.webSiteUrl = webSiteUrl;
+    }
+
+    public Country getCountryOfRegistration() {
+        return countryOfRegistration;
+    }
+
+    public void setCountryOfRegistration(Country countryOfRegistration) {
+        this.countryOfRegistration = countryOfRegistration;
     }
 
     public List<Location> getLocations() {

@@ -2,14 +2,15 @@ package DAL.Repositories;
 
 import Common.Annotations.UserCaption;
 import Common.Contracts.FieldDef;
-import Common.FieldDefImpl;
-import Common.IpAddress;
+import Common.Classes.FieldDefImpl;
+import Common.Classes.IpAddress;
 import DAL.Annotations.*;
 import DAL.Contracts.Repository.ReadViewRepository;
-import DAL.Utils.Filter.Contracts.FilterDef;
+import DAL.Utils.Filter.Contracts.FilterExpression;
+import DAL.Utils.Filter.Contracts.FilterTokenDef;
 import DAL.Utils.Filter.Enums.CriteriaType;
 import DAL.Utils.Filter.Enums.PredicateType;
-import DAL.Utils.Filter.FilterDefImpl;
+import DAL.Utils.Filter.FilterTokenDefImpl;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -23,13 +24,15 @@ public class BaseReadViewRepository<T> implements ReadViewRepository<T> {
 
     private final EntityManager entityManager;
     private final Class<T> clazz;
+    private Constructor<T> ctor;
+    private String  rootEntityName;
     private final Map<Integer, FieldDef> fieldMap;
     private List<String> projectionExpressionTokens;
-
     private final Map<String, FieldDef> filterableFields;
     private final Deque<Object> filterParams;
     private final Deque<String> filterTokens;
     private String query;
+    private boolean useDistinct;
 
     public BaseReadViewRepository(EntityManager entityManager, Class<T> clazz) {
         Objects.requireNonNull(entityManager, "EntityManager object reference must be not null");
@@ -41,22 +44,25 @@ public class BaseReadViewRepository<T> implements ReadViewRepository<T> {
         this.fieldMap = new TreeMap<>();
         this.filterParams = new ArrayDeque<>();
         this.filterTokens = new ArrayDeque<>();
+        this.useDistinct = false;
+
+        collectMetaData();
     }
 
-    private void prepareJpql(){
+    private void collectMetaData(){
         SourceEntity[] entityAttr = clazz.getDeclaredAnnotationsByType(SourceEntity.class);
         if (entityAttr.length == 0){
             throw new IllegalStateException("Illegal class annotations detected");
         }
 
-        String rootEntityName = entityAttr[0].entityName();
+        this.rootEntityName = entityAttr[0].entityName();
 
         Constructor[] ctors = clazz.getDeclaredConstructors();
         if (ctors.length == 0){
             throw new IllegalStateException("Illegal default constructor structure detected");
         }
 
-        Constructor<T> ctor = ctors[0];
+        this.ctor = ctors[0];
 
         Field[] fields = clazz.getDeclaredFields();
         for(Field f: fields){
@@ -72,11 +78,10 @@ public class BaseReadViewRepository<T> implements ReadViewRepository<T> {
             String caption = captionAttr[0].value();
             SourceField source = sourceAttr[0];
             String entity = source.fieldSource();
-            String alias = ROOT_ENTITY_ALIAS;
             String field = source.fieldName();
             String path = source.fieldProjectionPath().isEmpty() ? source.fieldName() : source.fieldProjectionPath();
 
-            FieldDef fd = new FieldDefImpl(entity, alias, field, path, caption, f.getType());
+            FieldDef fd = new FieldDefImpl(entity, ROOT_ENTITY_ALIAS, field, path, caption, f.getType());
             if (ctorParamsAttr.length > 0) {
                 int pos = ctorParamsAttr[0].position();
                 this.fieldMap.put(pos, fd);
@@ -86,21 +91,25 @@ public class BaseReadViewRepository<T> implements ReadViewRepository<T> {
                 filterableFields.put(f.getName(), fd);
             }
         }
+    }
+
+    private void prepareJpql(){
 
         this.projectionExpressionTokens = this.fieldMap.entrySet()
                                                     .stream()
                                                         .map(e -> ROOT_ENTITY_ALIAS
                                                                     +"."+e.getValue().getProjectionPath())
                                                                     .collect(Collectors.toList());
-        this.query = "select new "
-                .concat(ctor.getName())
+        String sqlOperator = (this.useDistinct) ? "select distinct new " : "select new ";
+        this.query = sqlOperator
+                .concat(this.ctor.getName())
                 .concat("(")
                 .concat(String.join(",",this.projectionExpressionTokens))
                 .concat(")");
 
         this.query = this.query
                 .concat(" from ")
-                .concat(rootEntityName)
+                .concat(this.rootEntityName)
                 .concat(" ")
                 .concat(ROOT_ENTITY_ALIAS);
 
@@ -115,14 +124,20 @@ public class BaseReadViewRepository<T> implements ReadViewRepository<T> {
     }
 
     @Override
-    public List<FilterDef> getFilterDefs() {
-        return this.filterableFields.values()
+    public List<FilterTokenDef> getFilterDefs() {
+        return this.filterableFields.entrySet()
                     .stream()
-                        .map(fd -> new FilterDefImpl(fd.getEntity(),
-                                                     fd.getName(),
-                                                     fd.getCaption(),
-                                                     CriteriaType.getByType(fd.getClass())
-                            )).collect(Collectors.toList());
+                        .map(entry -> {
+                            String fieldName = entry.getKey();
+                            FieldDef fieldDef = entry.getValue();
+                            return new FilterTokenDefImpl(fieldDef.getEntity(),
+                                                          fieldName,
+                                                          fieldDef.getClassRef(),
+                                                          fieldDef.getCaption(),
+                                                          (fieldDef.getEntity().equals(this.rootEntityName))?
+                                                                CriteriaType.getByType(fieldDef.getClassRef())
+                                                                : CriteriaType.ENTITY_REF);
+                        }).collect(Collectors.toList());
     }
 
     @Override
@@ -138,6 +153,23 @@ public class BaseReadViewRepository<T> implements ReadViewRepository<T> {
         return queryDef.getResultList();
     }
 
+    @Override
+    public void applyFilter(FilterExpression[] filterExpr) {
+        if (filterExpr == null || filterExpr.length == 0) return;
+        for (FilterExpression expr : filterExpr){
+            String fieldName = expr.getFilterObjectDef().getFieldName();
+            CriteriaType criteria = expr.getFilterObjectDef().getCriteriaType();
+            PredicateType predicate = expr.getPredicate();
+            Object filterValue = expr.getFilterValue();
+
+            if (criteria == CriteriaType.STRING_PATTERN || predicate == null){
+                this.addFilter(fieldName, (String)filterValue);
+            } else {
+                this.addFilter(fieldName, predicate, filterValue);
+            }
+        }
+    }
+
     public String getFilterableFields() {
         return filterableFields.values().stream().map(Object::toString).collect(Collectors.joining(", "));
     }
@@ -149,10 +181,6 @@ public class BaseReadViewRepository<T> implements ReadViewRepository<T> {
 
         FieldDef field = this.filterableFields.get(fieldName);
         Objects.requireNonNull(field, "Field name passed is not filterable");
-
-        /*if (!field.getClassRef().equals(value.getClass())){
-            throw new IllegalArgumentException("Criteria type must be ".concat(field.getClassRef().getSimpleName()));
-        }*/
 
         if (!predicate.equals(PredicateType.EQ) &&
                 (field.getClassRef().equals(String.class) || field.getClassRef().equals(IpAddress.class))){
@@ -187,12 +215,17 @@ public class BaseReadViewRepository<T> implements ReadViewRepository<T> {
         }
         int stackPos = this.filterParams.size() + 1; // длина стэка, начиная с единицы
         this.filterTokens.push(
-                String.format("%s.%s LIKE ?%d",
+                String.format("lower(%s.%s) LIKE ?%d",
                         ROOT_ENTITY_ALIAS,
                         field.getProjectionPath(),
                         stackPos)
         );
-        this.filterParams.push("%"+pattern+"%");
+        this.filterParams.push("%"+pattern.toLowerCase()+"%");
+    }
+
+    @Override
+    public void useDistinct(boolean mode) {
+        this.useDistinct = mode;
     }
 
     @Override
